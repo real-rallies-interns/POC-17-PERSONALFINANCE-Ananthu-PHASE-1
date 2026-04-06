@@ -7,7 +7,7 @@ class Balance(BaseModel):
     available: Optional[float] = None
     current: float
     limit: Optional[float] = None
-    currency: str = "USD"
+    currency: str = "INR"  # <-- Changed from USD
 
 # 2. Account Schema
 class Account(BaseModel):

@@ -8,19 +8,19 @@ def get_mock_data():
         name="Main Checking",
         type="depository",
         subtype="checking",
-        balances=Balance(available=2450.0, current=2500.0)
+        balances=Balance(available=145000.0, current=150000.0) # Upgraded to realistic INR balance
     )
 
     transactions = []
     start_date = date.today() - timedelta(days=90)
 
-    # 1. Add Recurring "Ghost" Subscriptions (The Traps)
+    # 1. Add Recurring "Ghost" Subscriptions (Realistic INR)
     for i in range(3): # 3 months of history
         tx_date = start_date + timedelta(days=i*30)
         transactions.append(Transaction(
             transaction_id=f"ghost_{i}",
             account_id="acc_001",
-            amount=15.99,
+            amount=499.00, # Realistic Netflix Standard Plan
             date=tx_date,
             name="Netflix Subscription",
             category=["Service", "Entertainment"]
@@ -30,21 +30,33 @@ def get_mock_data():
         transactions.append(Transaction(
             transaction_id=f"gym_{i}",
             account_id="acc_001",
-            amount=45.00,
+            amount=1999.00, # Realistic Monthly Gym Fee
             date=tx_date + timedelta(days=5),
             name="Gold Fitness",
             category=["Health", "Fitness"]
         ))
 
-    # 2. Add Random Daily Spends (The "Noise")
+    # 2. Add Random Daily Spends (The "Noise" localized to India)
     for i in range(60):
         random_date = start_date + timedelta(days=random.randint(0, 90))
+        merchant_name = random.choice(["Uber", "Starbucks", "Amazon", "Zomato", "Swiggy", "Blinkit"])
+        
+        # Assign realistic spending ranges based on the merchant
+        if merchant_name in ["Uber", "Zomato", "Swiggy"]:
+            amt = round(random.uniform(150.0, 600.0), 2)
+        elif merchant_name == "Starbucks":
+            amt = round(random.uniform(300.0, 900.0), 2)
+        elif merchant_name == "Blinkit":
+            amt = round(random.uniform(400.0, 1500.0), 2)
+        else: # Amazon
+            amt = round(random.uniform(800.0, 4500.0), 2)
+
         transactions.append(Transaction(
             transaction_id=f"rand_{i}",
             account_id="acc_001",
-            amount=round(random.uniform(5.0, 50.0), 2),
+            amount=amt,
             date=random_date,
-            name=random.choice(["Uber", "Starbucks", "Amazon", "Zomato"]),
+            name=merchant_name,
             category=["Food" if i%2==0 else "Travel"]
         ))
 
