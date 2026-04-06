@@ -18,15 +18,24 @@ def get_rail_intelligence():
     account, transactions = get_mock_data()
     df = pd.DataFrame([t.model_dump() for t in transactions])
     
-    # 1. Separate Income and Outflow using Pandas
+    # Separate Income and Outflow using Pandas
     is_income = df['category'].apply(lambda c: 'Income' in c)
     total_income = df[is_income]['amount'].sum()
     total_spent = df[~is_income]['amount'].sum()
     
     recurring = find_recurring_spends(transactions)
     
-    # 2. Predictive Intelligence: Cash Runway Calculation
-    # Formula: Current Liquidity / Average Daily Burn Rate
+    # --- NEW: DETERMINISTIC AI MODEL ---
+    # 1. Calculate how much of the 90-day spend was purely recurring bills
+    recurring_90d_total = sum(item["total_spent_90d"] for item in recurring)
+    
+    # 2. Isolate the "Noise" (Food, Uber, etc.)
+    noise_90d_total = total_spent - recurring_90d_total
+    
+    # 3. Calculate the true daily burn rate for the random stuff
+    daily_noise_rate = noise_90d_total / 90
+    
+    # Overall Runway
     daily_burn_rate = total_spent / 90
     runway_days = int(account.balances.current / daily_burn_rate) if daily_burn_rate > 0 else 999
     
@@ -38,7 +47,8 @@ def get_rail_intelligence():
             "metrics": {
                 "total_spent": float(total_spent),
                 "total_income": float(total_income),
-                "runway_days": runway_days
+                "runway_days": runway_days,
+                "daily_noise_rate": float(daily_noise_rate) # Passing the new AI calculation
             },
             "why_it_matters": "Financial rails are the infrastructure of personal stability.",
             "governance": "Individual control over institutional payment cycles.",
