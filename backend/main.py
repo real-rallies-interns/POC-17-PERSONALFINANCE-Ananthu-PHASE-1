@@ -15,25 +15,33 @@ app.add_middleware(
 
 @app.get("/intelligence/rail-data")
 def get_rail_intelligence():
-    # 1. Get raw data
     account, transactions = get_mock_data()
-    
-    # 2. Convert to Pandas for "Orchestration" (Protocol Requirement)
     df = pd.DataFrame([t.model_dump() for t in transactions])
     
-    # 3. Derive Intelligence (e.g., Average spend vs. total)
-    total_spent = df[df['amount'] > 0]['amount'].sum()
+    # 1. Separate Income and Outflow using Pandas
+    is_income = df['category'].apply(lambda c: 'Income' in c)
+    total_income = df[is_income]['amount'].sum()
+    total_spent = df[~is_income]['amount'].sum()
+    
     recurring = find_recurring_spends(transactions)
+    
+    # 2. Predictive Intelligence: Cash Runway Calculation
+    # Formula: Current Liquidity / Average Daily Burn Rate
+    daily_burn_rate = total_spent / 90
+    runway_days = int(account.balances.current / daily_burn_rate) if daily_burn_rate > 0 else 999
     
     return {
         "main_stage": {
             "transactions": transactions,
-            "total_volume": float(total_spent)
         },
         "sidebar": {
-            "metrics": {"total_spent": total_spent, "active_ghosts": len(recurring)},
-            "why_it_matters": "Financial rails are the infrastructure of personal stability.", # [cite: 49]
-            "governance": "Individual control over institutional payment cycles.", # [cite: 50]
+            "metrics": {
+                "total_spent": float(total_spent),
+                "total_income": float(total_income),
+                "runway_days": runway_days
+            },
+            "why_it_matters": "Financial rails are the infrastructure of personal stability.",
+            "governance": "Individual control over institutional payment cycles.",
             "insights": recurring
         }
     }
