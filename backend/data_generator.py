@@ -74,15 +74,35 @@ def get_mock_data():
             **locations["Bangalore"]
         ))
 
+    # 2.5 Telecom Subscriptions (Every 28 Days, exactly ₹350)
+    for i in range(4):
+        tx_date = base_date + timedelta(days=5 + (i * 28))
+        if tx_date <= date.today():
+            transactions.append(Transaction(
+                transaction_id=f"jio_recharge_{i}",
+                account_id="acc_002",
+                amount=350.00,
+                date=tx_date,
+                name="Jio Recharge",
+                category=["Utility", "Telecom"],
+                city="Mumbai",
+                **locations["Mumbai"]
+            ))
+
     # 3. High-Velocity "Noise" Spending (Targeting ~₹1,25,700)
     # Increased quantity and average transaction size to drop savings rate to ~4%
     for i in range(85):
         random_date = base_date + timedelta(days=random.randint(0, 90))
-        merchant_name = random.choice(["Apple Store", "Luxury Stay", "Nike", "Amazon", "Fine Dining", "Airlines"])
+        merchant_name = random.choice(["Swiggy", "Zomato", "Uber", "Amazon", "Blinkit", "Starbucks", "BookMyShow", "Apollo Pharmacy"])
         city_choice = random.choice(["Delhi", "Mumbai", "Bangalore"])
         
-        # Higher range per transaction to simulate high outflow
-        amt = round(random.uniform(800.0, 2200.0), 2)
+        # Real-life variance based on the seller
+        if merchant_name in ["Swiggy", "Zomato", "Uber", "Blinkit", "Starbucks"]:
+            amt = round(random.uniform(150.0, 750.0), 2)
+        elif merchant_name in ["Apollo Pharmacy"]:
+            amt = round(random.uniform(500.0, 1200.0), 2)
+        else:
+            amt = round(random.uniform(1000.0, 3500.0), 2)
 
         transactions.append(Transaction(
             transaction_id=f"rand_{i}",
