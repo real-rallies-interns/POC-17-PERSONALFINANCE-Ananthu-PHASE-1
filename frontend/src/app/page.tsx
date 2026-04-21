@@ -160,7 +160,7 @@ export default function RealRailsDashboard() {
         {/* MAIN STAGE (70%) */}
         <section className="w-[70%] bg-[#040608] relative overflow-hidden flex flex-col pt-6 pb-2">
 
-          <div className="flex justify-between items-start px-8 shrink-0 z-10">
+          <div className="flex flex-col items-start gap-3 px-8 shrink-0 z-10">
             <div>
               <p className={`${activeView === 'history' ? 'text-[#06b6d4]' : 'text-[#818CF8]'} text-[10px] font-bold tracking-widest uppercase opacity-80`}>{activeView === 'history' ? `${timeRange}D_SPENDING_VELOCITY` : 'DETERMINISTIC_MODELING'}</p>
               <h3 className="text-2xl font-bold mt-1 text-white">{activeView === 'history' ? 'Institutional Flow' : 'Cash Runway Burn-Down'}</h3>
