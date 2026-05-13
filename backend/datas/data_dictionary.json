@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "record_label": "Always 'SYNTHETIC_DATA_DO_NOT_USE_IN_PRODUCTION'. Watermarks every row.",
+    "transaction_id": "Unique transaction ID. Format TXN-NNNNN or TXN-ECNNN for edge cases.",
+    "user_id": "Anonymised persona ID. Format USR-NNNN.",
+    "user_name": "Synthetic persona full name. Not a real person.",
+    "user_age": "Persona age (integer). Range 18\u201365.",
+    "date": "ISO 8601 date of transaction (YYYY-MM-DD). Edge case TXN-EC005 has future date.",
+    "month": "YYYY-MM rollup period for grouping.",
+    "category": "Top-level spending/income category. One of 18 values.",
+    "subcategory": "Spending classification: Essential, Discretionary, Recurring, One-off, Income. May be null (edge case).",
+    "amount": "Transaction amount in original_currency. May be 0.0 for reversals.",
+    "currency": "3-letter ISO 4217 currency code: USD, EUR, GBP, INR, SGD.",
+    "direction": "'credit' (money in) or 'debit' (money out).",
+    "account_type": "Account bucket: Checking, Savings, Credit Card, Investment Brokerage, Emergency Fund.",
+    "institution": "Synthetic bank/broker name.",
+    "balance_after": "Account balance after transaction. May be negative (overdraft edge case).",
+    "is_recurring": "Boolean. True if this is a known recurring charge/income.",
+    "budget_limit": "Monthly budget cap set for this category in USD. Null if no budget set.",
+    "budget_pct_used": "amount / budget_limit * 100. Null if budget_limit is null. >100 = over budget.",
+    "tags": "Snake_case tag derived from category for filtering/grouping.",
+    "note": "Human-readable annotation. Edge case records carry 'EDGE: ...' notes.",
+    "risk_flag": "Boolean. True when budget_pct_used > 120 or anomaly_score > 0.85.",
+    "anomaly_score": "Float 0.0\u20131.0. Higher = more anomalous. Statistical outlier signal.",
+    "fx_rate_to_usd": "Exchange rate at time of transaction (1 original_currency = N USD).",
+    "original_currency": "Currency the transaction was denominated in.",
+    "original_amount": "Amount in original_currency before FX conversion."
+  }
+}
